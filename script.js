@@ -13,70 +13,57 @@ function saveBookmarks() {
 addBtn.addEventListener("click", onAddBookmarks)
 
 function onAddBookmarks() {
-  value = input.value.trim();
-  if (value.tim() === "") {
+  value = inputEl.value.trim();
+  if (value.trim() === "") {
     return
   };
   bookmarks.push(value);
   saveBookmarks();
   renderBookmarks();
-  input.value = "";
+  inputEl.value = "";
 };
 
 function renderBookmarks() {
-	listEl.innerHTML = ''
-
-	bookmarks.forEach((value, index) => {
-		const li = document.createElement('li')
-		const a = document.createElement('a')
-		const editBtn = document.createElement('button')
-		const delBtn = document.createElement('button')
-
-		a.href = value
-		a.textContent = value
-		a.target = '_blank'
-		a.rel = 'noopener noreferrer'
-
-		editBtn.textContent = 'Edit'
-		delBtn.textContent = 'Delete'
-
-		editBtn.dataset.index = index
-		delBtn.dataset.index = index
-
-
-		delBtn.addEventListener('click', () => {
-			bookmarks.splice(index, 1)
-			saveBookmarks()
-			renderBookmarks()
-		})
-
-
-		editBtn.addEventListener('click', () => {
-			const newUrl = prompt('Введіть новий URL:', value)
-			if (newUrl && newUrl.trim() !== '') {
-				bookmarks[index] = newUrl.trim()
-				saveBookmarks()
-				renderBookmarks()
-			}
-		})
-
-		li.appendChild(a)
-		li.appendChild(editBtn)
-		li.appendChild(delBtn)
-		listEl.appendChild(li)
-	})
+  listEl.innerHTML = bookmarks
+		.map(
+			(value, index) => `
+        <li>
+          <a href="${value}" target="_blank" rel="noopener noreferrer">${value}</a>
+          <button data-action="edit" data-index="${index}">Edit</button>
+          <button data-action="delete" data-index="${index}">Delete</button>
+        </li>
+      `
+		)
+		.join('')
 }
 
-
-addBtn.addEventListener('click', () => {
-	const value = inputEl.value.trim()
-	if (value === '') return
-
-	bookmarks.push(value)
-	saveBookmarks()
-	renderBookmarks()
-	inputEl.value = ''
+addBtn.addEventListener("click", () => {
+	const value = inputEl.value.trim();
+	if (!value) { return }
+	
+	bookmarks.push(value);
+	saveBookmarks();
+	renderBookmarks();
+	inputEl.value = "";
 })
 
+listEl.addEventListener("click", (e) => {
+	const btn = e.target
+	const index = btn.dataset.index
 
+	if (btn.dataset.action === 'delete') {
+		bookmarks.splice(index, 1)
+		saveBookmarks()
+		renderBookmarks()
+	}
+
+	if ((btn.dataset.action === 'edit')) {
+		const newValue = prompt('Change url:', bookmarks[index])
+		if (newValue && newValue.trim()) {
+			bookmarks[index] = newValue.trim()
+			saveBookmarks()
+			renderBookmarks()
+		}
+	}
+})
 renderBookmarks()
