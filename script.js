@@ -13,7 +13,7 @@ function saveBookmarks() {
 addBtn.addEventListener("click", onAddBookmarks)
 
 function onAddBookmarks() {
-  value = inputEl.value.trim();
+  const value = inputEl.value.trim();
   if (value.trim() === "") {
     return
   };
@@ -37,16 +37,6 @@ function renderBookmarks() {
 		.join('')
 }
 
-addBtn.addEventListener("click", () => {
-	const value = inputEl.value.trim();
-	if (!value) { return }
-	
-	bookmarks.push(value);
-	saveBookmarks();
-	renderBookmarks();
-	inputEl.value = "";
-})
-
 listEl.addEventListener("click", (e) => {
 	const btn = e.target
 	const index = btn.dataset.index
@@ -55,9 +45,7 @@ listEl.addEventListener("click", (e) => {
 		bookmarks.splice(index, 1)
 		saveBookmarks()
 		renderBookmarks()
-	}
-
-	if ((btn.dataset.action === 'edit')) {
+	} else if (btn.dataset.action === 'edit') {
 		const newValue = prompt('Change url:', bookmarks[index])
 		if (newValue && newValue.trim()) {
 			bookmarks[index] = newValue.trim()
